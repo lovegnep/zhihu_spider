@@ -29,6 +29,7 @@ class ZhihuSipder(CrawlSpider):
         groupnames = selector.xpath('//a[contains(@href, "/group?id=")]/@title').extract()
         locations = selector.xpath('//a[@class="btnCity"]/text()').extract()
         nexturls = selector.xpath('//a[contains(@href, "/group?id=")]/@href').extract()
+        print nexturls
         for index in range(len(nexturls)):
             complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
             tmpitem = {

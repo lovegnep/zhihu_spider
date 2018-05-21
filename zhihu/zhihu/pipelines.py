@@ -50,7 +50,12 @@ class ZhihuPipeline(object):
                           dict(item), upsert=True)
 
         image_url = item['groupQR']
-        imagename = image_url[(image_url.rfind('/')+1):(image_url.rfind('?'))]
+        index = -1
+        if image_url.rfind('?') == -1 :
+            index = len(image_url)
+        else:
+            index = image_url.rfind('?')
+        imagename = image_url[(image_url.rfind('/')+1):index]
         print imagename, image_url
         image_path = os.path.join(self.image_dir, imagename)
         download_pic.delay(groupQR, image_path)
