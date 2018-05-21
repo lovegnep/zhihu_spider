@@ -2,7 +2,8 @@
 import os
 import re
 import json
-
+import time
+import province
 from urllib import urlencode
 from scrapy import log
 from scrapy.spiders import CrawlSpider
@@ -109,11 +110,14 @@ class ZhihuSipder(CrawlSpider):
         qrs = selector.xpath('//span[@class="shiftcode"]/img/@src').extract()
         groupQR = qrs[1]
         masterQR = qrs[0]
-        abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()
+        abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0]
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
         industry = otherinfos[0]
-        location = otherinfos[1]
+        location = province.getLocationByName(otherinfos[1])
         grouptag = otherinfos[2]
+        createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
+        createTime = time.strptime(createTime, "%Y-%m-%d %H:%M:%S")
+        updateTime = createTime
         masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1]
         item = ZhihuPeopleItem(
             type=1,
