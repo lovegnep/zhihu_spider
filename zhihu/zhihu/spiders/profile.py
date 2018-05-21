@@ -3,6 +3,7 @@ import os
 import re
 import json
 import time
+import datetime
 import province
 from urllib import urlencode
 from scrapy import log
@@ -116,7 +117,7 @@ class ZhihuSipder(CrawlSpider):
         location = province.getLocationByName(otherinfos[1].strip())
         grouptag = otherinfos[2]
         createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
-        createTime = time.strptime(createTime, "%Y-%m-%d %H:%M:%S")
+        createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
         masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1]
         item = ZhihuPeopleItem(
