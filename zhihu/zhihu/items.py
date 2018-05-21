@@ -22,19 +22,31 @@ class ZhihuPeopleItem(Item):
         education 教育情况
         image_url 头像图片url
     """
-    nickname = Field()
-    zhihu_id = Field()
+
+    uploader = Field()
+    type = Field()
+    source = Field()
+    industry = Field()
     location = Field()
-    business = Field()
+    groupname = Field()
+    abstract = Field()
+    grouptag = Field()
+    tags = Field()
+    masterwx = Field()
+    groupavatar = Field()
+    groupQR = Field()
+    masterQR = Field()
+    createTime = Field()
+    updateTime = Field()
+    viewCount = Field()
+    likeCount = Field()
+    commentCount = Field()
     gender = Field()
-    employment = Field()
-    position = Field()
-    education = Field()
-    agree_count = Field()
-    thanks_count = Field()
-    followee_count = Field()
-    follower_count = Field()
-    image_url = Field()
+    birthday = Field()
+    delete = Field()
+    secret = Field()
+    f5Time = Field()
+
 
 
 class ZhihuRelationItem(Item):

@@ -98,7 +98,7 @@ SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
 PROJECT_DIR = os.path.dirname(os.path.abspath(os.path.curdir))
 
 # mongodb配置
-MONGO_URI = 'mongodb://localhost:27017'
+MONGO_URI = 'mongodb://172.18.223.34:20006'
 
 # pipeline设置
 ITEM_PIPELINES = {
@@ -106,4 +106,4 @@ ITEM_PIPELINES = {
 }
 
 # 异步任务队列
-BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+BROKER_URL = 'amqp://lovegnep:lovegnep@localhost:5672//'

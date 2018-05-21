@@ -15,59 +15,18 @@ from zhihu.constants import Gender, People, HEADER
 
 class ZhihuSipder(CrawlSpider):
     name = "zhihu"
-    allowed_domains = ["www.zhihu.com"]
-    start_url = "https://www.zhihu.com/people/weizhi-xiazhi"
+    allowed_domains = ["www.weixinqun.com"]
+    start_url = "https://www.weixinqun.com/group?p=0"
 
-    def __init__(self, *args, **kwargs):
-        super(ZhihuSipder, self).__init__(*args, **kwargs)
-        self.xsrf = ''
-
-    def start_requests(self):
-        """
-        登陆页面 获取xrsf
-        """
-        return [Request(
-            "https://www.zhihu.com/#signin",
-            meta={'cookiejar': 1},
-            callback=self.post_login
-        )]
-
-    def post_login(self, response):
-        """
-        解析登陆页面，发送登陆表单
-        """
-        self.xsrf = Selector(response).xpath(
-            '//input[@name="_xsrf"]/@value'
-        ).extract()[0]
-        return [FormRequest(
-            'https://www.zhihu.com/login/email',
-            method='POST',
-            meta={'cookiejar': response.meta['cookiejar']},
-            formdata={
-                '_xsrf': self.xsrf,
-                'email': 'xxxxxxxxx',
-                'password': 'xxxxxxxxx',
-                'remember_me': 'true'},
-            callback=self.after_login
-        )]
-
-    def after_login(self, response):
-        """
-        登陆完成后从第一个用户开始爬数据
-        """
-        return [Request(
-            self.start_url,
-            meta={'cookiejar': response.meta['cookiejar']},
-            callback=self.parse_people,
-            errback=self.parse_err,
-        )]
-
-    def parse_people(self, response):
+    def parse(self, response):
         """
         解析用户主页
         """
         selector = Selector(response)
-        nickname=selector.xpath(
+        timeago = selector.xpath('//div[@class="border5"]/p[@class="wxNum ellips"]/span[@class="caaa"]/text()').extract()
+        print timeago
+        """
+        groupname=selector.xpath(
             '//div[@class="title-section ellipsis"]/span[@class="name"]/text()'
         ).extract_first()
         zhihu_id=os.path.split(response.url)[-1]
@@ -123,7 +82,7 @@ class ZhihuSipder(CrawlSpider):
             image_url=image_url,
         )
         yield item
-
+"""
     def parse_follow(self, response):
         """
         解析follow数据

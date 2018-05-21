@@ -44,9 +44,9 @@ class ZhihuPipeline(object):
         """
         存储用户信息
         """
-        collection = self.db['people']
-        zhihu_id = item['zhihu_id']
-        collection.update({'zhihu_id': zhihu_id},
+        collection = self.db['qrmodels']
+        groupQR = item['groupQR']
+        collection.update({'groupQR': groupQR},
                           dict(item), upsert=True)
 
         image_url = item['image_url']
