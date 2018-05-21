@@ -3256,7 +3256,7 @@ cityJson = [
 
 def getLocationByName(name):
     leng = len(cityJson)
-    p = re.compile(ur'' + name.decode('utf8') + '')
+    p = re.compile(ur'' + name + '')
     print p
     for val in cityJson :
         print val
