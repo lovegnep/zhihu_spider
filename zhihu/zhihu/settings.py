@@ -113,3 +113,5 @@ DOWNLOAD_HANDLERS = {
 }
 
 LOG_FILE = "mySpider.log"
+
+FEED_EXPORT_ENCODING = 'utf-8'
