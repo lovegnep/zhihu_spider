@@ -3269,3 +3269,5 @@ def getLocationByName(name):
 
 def jiebaStr(groupname,abstract,grouptag):
     return re.split(',',','.join(jieba.cut_for_search(groupname+','+abstract+','+grouptag)))
+
+print jiebaStr(u'中中人国',u'季在要右处在',u'今天很忙')

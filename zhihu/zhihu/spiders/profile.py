@@ -116,7 +116,7 @@ class ZhihuSipder(CrawlSpider):
         industry = otherinfos[0]
         location = province.getLocationByName(otherinfos[1].strip())
         grouptag = re.split('[ |/,]',otherinfos[2])
-        tags = province.jiebaStr(tmpitem['groupname'],abstract,grouptag)
+        tags = province.jiebaStr(tmpitem['groupname'],abstract,otherinfos[2])
         createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
         createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
