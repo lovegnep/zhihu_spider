@@ -1,5 +1,6 @@
 # coding=UTF-8
 import re
+import jieba
 '''
 import sys
 reload(sys)
@@ -3265,3 +3266,6 @@ def getLocationByName(name):
         if searchObj:
             return val['item_code']
     return 0
+
+def jiebaStr(groupname,abstract,grouptag):
+    return re.split(',',','.join(jieba.cut_for_search(groupname+','+abstract+','+grouptag)))
