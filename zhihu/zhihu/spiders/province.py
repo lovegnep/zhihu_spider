@@ -3272,6 +3272,16 @@ def jiebaStr(groupname,abstract,grouptag):
     res = list(set(res))
     newres=[]
     for val in res:
-        if re.search(ur'[\u2E80-\u9FFF]+',val):
+        if re.search(ur'[a-zA-Z0-9\u2E80-\u9FFF]+',val):
+            newres.append(val)
+    return newres
+
+def rmspace(arr):
+    if len(arr) <= 0:
+        return []
+    res = list(set(arr))
+    newres=[]
+    for val in res:
+        if re.search(ur'[a-zA-Z0-9\u2E80-\u9FFF]+',val):
             newres.append(val)
     return newres
