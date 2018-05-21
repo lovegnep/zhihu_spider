@@ -25,7 +25,7 @@ class ZhihuSipder(CrawlSpider):
         """
         selector = Selector(response)
         timeago = selector.xpath('//div[@class="border5"]/p[@class="wxNum ellips"]/span[@class="caaa"]/text()').extract()
-        log.info('=======================',timeago)
+        print timeago
         """
         groupname=selector.xpath(
             '//div[@class="title-section ellipsis"]/span[@class="name"]/text()'
