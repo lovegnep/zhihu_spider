@@ -111,3 +111,5 @@ BROKER_URL = 'amqp://lovegnep:lovegnep@localhost:5672//'
 DOWNLOAD_HANDLERS = {
         'S3':None,
 }
+
+LOG_FILE = "mySpider.log"
