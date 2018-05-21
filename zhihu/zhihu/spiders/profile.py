@@ -16,8 +16,9 @@ from zhihu.constants import Gender, People, HEADER
 class ZhihuSipder(CrawlSpider):
     name = "zhihu"
     allowed_domains = ["www.weixinqun.com"]
-    start_url = "https://www.weixinqun.com/group?p=0"
-
+    start_urls = [
+        "https://www.weixinqun.com/group?p=0"
+    ]
     def parse(self, response):
         """
         解析用户主页
