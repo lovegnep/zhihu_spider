@@ -3268,7 +3268,11 @@ def getLocationByName(name):
     return 0
 
 def jiebaStr(groupname,abstract,grouptag):
-    res = re.split(',',','.join(jieba.cut_for_search(groupname+','+abstract+','+grouptag)))
+    str=groupname.strip()+abstract.strip()+grouptag.strip()
+
+    r = '[’!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+'
+    str=re.sub(r, u'', str)
+    res = jieba.lcut_for_search()
     res = list(set(res))
     newres=[]
     for val in res:
@@ -3279,9 +3283,20 @@ def jiebaStr(groupname,abstract,grouptag):
 def rmspace(arr):
     if len(arr) <= 0:
         return []
+    r = '[’!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+'
     res = list(set(arr))
     newres=[]
     for val in res:
-        if re.search(ur'[a-zA-Z0-9\u2E80-\u9FFF]+',val):
-            newres.append(val)
+        if re.search(ur'[a-zA-Z0-9\u2E80-\u9FFF]+',re.sub(r,u'',val)):
+            newres.append(re.sub(r,'',val))
     return newres
+
+def getImgName(src):
+    s=src.rfind('/')
+    e=src.rfind('?')
+    if e == -1:
+        e=len(src)
+    return src[s:e]
+
+def calcDbSrc(src):
+    return 'https://www.5min8.com/uploads/'+getImgName(src)

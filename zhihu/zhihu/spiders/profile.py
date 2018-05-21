@@ -30,7 +30,7 @@ class ZhihuSipder(CrawlSpider):
         groupavatars = selector.xpath('//a[contains(@href, "/group?id=")]/img/@src').extract()
         groupnames = selector.xpath('//a[contains(@href, "/group?id=")]/@title').extract()
         locations = selector.xpath('//a[@class="btnCity"]/text()').extract()
-        nexturls = selector.xpath('//a[contains(@href, "/group?id=")]/@href').extract()
+        nexturls = selector.xpath('//div[@class="border5"]/a[contains(@href, "/group?id=")]/@href').extract()
         print nexturls, len(nexturls)
         for index in range(len(nexturls)):
             print index
