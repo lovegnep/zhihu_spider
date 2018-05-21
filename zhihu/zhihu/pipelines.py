@@ -19,7 +19,7 @@ class ZhihuPipeline(object):
     def __init__(self, mongo_uri, mongo_db, image_dir):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
-        self.image_dir = image_dir
+        self.image_dir = '/home/zhihu_spider/images'
         self.client = None
         self.db= None
 
@@ -50,7 +50,9 @@ class ZhihuPipeline(object):
                           dict(item), upsert=True)
 
         image_url = item['groupQR']
-        image_path = os.path.join(self.image_dir, '{}.jpg'.format(groupQR))
+        imagename = image_url[(image_url.rfind('/')+1):(image_url.rfind('?'))]
+        print imagename, image_url
+        image_path = os.path.join(self.image_dir, '{}.jpg'.format(imagename))
         download_pic.delay(groupQR, image_path)
 
     def _process_relation(self, item):
