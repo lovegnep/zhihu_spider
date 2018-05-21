@@ -113,7 +113,7 @@ class ZhihuSipder(CrawlSpider):
         abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0]
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
         industry = otherinfos[0]
-        location = province.getLocationByName(otherinfos[1])
+        location = province.getLocationByName(otherinfos[1].strip())
         grouptag = otherinfos[2]
         createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
         createTime = time.strptime(createTime, "%Y-%m-%d %H:%M:%S")
@@ -131,6 +131,8 @@ class ZhihuSipder(CrawlSpider):
             groupavatar=tmpitem['groupavatar'],
             groupQR=groupQR,
             masterQR=masterQR,
+            createTime=createTime,
+            updateTime=updateTime
         )
         yield item
         """

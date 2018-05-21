@@ -3257,9 +3257,9 @@ cityJson = [
 def getLocationByName(name):
     leng = len(cityJson)
     p = re.compile(ur'' + name + '')
-    print p
+    #print p
     for val in cityJson :
-        print val
+        #print val
         searchObj = p.search(val['item_name'].decode('utf8'))
 
         if searchObj:
