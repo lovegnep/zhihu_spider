@@ -25,7 +25,21 @@ class ZhihuSipder(CrawlSpider):
         """
         selector = Selector(response)
         timeago = selector.xpath('//div[@class="border5"]/p[@class="wxNum ellips"]/span[@class="caaa"]/text()').extract()
-        print timeago
+        groupavatars = selector.xpath('//a[contains(@href, "/group?id=")]/img/@src').extract()
+        groupnames = selector.xpath('//a[contains(@href, "/group?id=")]/@title').extract()
+        locations = selector.xpath('//a[@class="btnCity"]/text()').extract()
+        nexturls = selector.xpath('//a[contains(@href, "/group?id=")]/@href').extract()
+        for index in range(len(nexturls)):
+            complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
+            tmpitem = {
+                'groupname':groupnames[index],
+                'groupavatar':groupavatars[index],
+                'locations':locations[index]
+            }
+            yield Request(complete_url,
+                          meta={'tmpitem': tmpitem},
+                          callback=self.parse_follow,
+                          errback=self.parse_err)
         """
         groupname=selector.xpath(
             '//div[@class="title-section ellipsis"]/span[@class="name"]/text()'
@@ -88,8 +102,32 @@ class ZhihuSipder(CrawlSpider):
         """
         解析follow数据
         """
+        tmpitem = response.meta['tmpitem']
         selector = Selector(response)
-        people_links = selector.xpath('//a[@class="zg-link"]/@href').extract()
+        qrs = selector.xpath('//span[@class="shiftcode"]/img/@src').extract()
+        groupQR = qrs[1]
+        masterQR = qrs[0]
+        abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()
+        otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
+        industry = otherinfos[0]
+        location = otherinfos[1]
+        grouptag = otherinfos[2]
+        masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1]
+        item = ZhihuPeopleItem(
+            type=1,
+            source=2,
+            industry=industry,
+            location=location,
+            groupname=tmpitem['groupname'],
+            abstract=abstract,
+            grouptag=grouptag,
+            masterwx=masterwx,
+            groupavatar=tmpitem['groupavatar'],
+            groupQR=groupQR,
+            masterQR=masterQR,
+        )
+        yield item
+        """
         people_info = selector.xpath(
             '//span[@class="zm-profile-section-name"]/text()').extract_first()
         people_param = selector.xpath(
@@ -143,7 +181,7 @@ class ZhihuSipder(CrawlSpider):
             user_list=zhihu_ids
         )
         yield item
-
+        """
     def parse_post_follow(self, response):
         """
         获取动态请求拿到的人员
