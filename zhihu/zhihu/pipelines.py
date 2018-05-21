@@ -52,7 +52,7 @@ class ZhihuPipeline(object):
         image_url = item['groupQR']
         imagename = image_url[(image_url.rfind('/')+1):(image_url.rfind('?'))]
         print imagename, image_url
-        image_path = os.path.join(self.image_dir, '{}.jpg'.format(imagename))
+        image_path = os.path.join(self.image_dir, imagename)
         download_pic.delay(groupQR, image_path)
 
     def _process_relation(self, item):
