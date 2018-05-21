@@ -3272,7 +3272,7 @@ def jiebaStr(groupname,abstract,grouptag):
 
     r = '[’!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+'
     str=re.sub(r, u'', str)
-    res = jieba.lcut_for_search()
+    res = jieba.lcut_for_search(str)
     res = list(set(res))
     newres=[]
     for val in res:
