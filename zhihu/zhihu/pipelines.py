@@ -49,10 +49,9 @@ class ZhihuPipeline(object):
         collection.update({'groupQR': groupQR},
                           dict(item), upsert=True)
 
-        image_url = item['image_url']
-        if image_url and zhihu_id:
-            image_path = os.path.join(self.image_dir, '{}.jpg'.format(zhihu_id))
-            download_pic.delay(image_url, image_path)
+        image_url = item['groupQR']
+        image_path = os.path.join(self.image_dir, '{}.jpg'.format(groupQR))
+        download_pic.delay(groupQR, image_path)
 
     def _process_relation(self, item):
         """
