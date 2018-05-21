@@ -107,3 +107,7 @@ ITEM_PIPELINES = {
 
 # 异步任务队列
 BROKER_URL = 'amqp://lovegnep:lovegnep@localhost:5672//'
+
+DOWNLOAD_HANDLERS = {
+        'S3':None,
+}
