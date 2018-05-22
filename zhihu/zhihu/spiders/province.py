@@ -3300,4 +3300,4 @@ def getImgName(src):
     return src[s:e]
 
 def calcDbSrc(src,pid):
-    return 'https://www.5min8.com/uploads/'+pid+getImgName(src)
+    return 'https://www.5min8.com/uploads/'+str(pid)+getImgName(src)

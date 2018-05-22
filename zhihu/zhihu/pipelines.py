@@ -56,7 +56,7 @@ class ZhihuPipeline(object):
         imgname = spiders.province.getImgName(image_url)
 
         item['groupQR']=spiders.province.calcDbSrc(image_url,pid)
-        image_path = os.path.join(self.image_dir, pid+imgname)
+        image_path = os.path.join(self.image_dir, str(pid)+imgname)
         print image_path, item['groupQR']
         download_pic.delay(groupQR, image_path)
 
