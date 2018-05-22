@@ -47,6 +47,7 @@ class ZhihuSipder(CrawlSpider):
                           callback=self.parse_follow,
                           errback=self.parse_err)
         if self.index < self.maxindex:
+            print 'self.index:',self.index
             nexturl = "https://www.weixinqun.com/group?p="+str(self.index)
             yield Request(nexturl,callback=self.parse,errback=self.parse_err)
             self.index = self.index+1
