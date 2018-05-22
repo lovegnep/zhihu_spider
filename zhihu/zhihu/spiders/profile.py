@@ -230,5 +230,5 @@ class ZhihuSipder(CrawlSpider):
             user_list=zhihu_ids,
         )
 
-    def parse_err(self, response):
-        log.ERROR('crawl {} failed'.format(response.url))
+    def parse_err(self, err):
+        log.ERROR('crawl {} failed'.format(err))
