@@ -51,12 +51,13 @@ class ZhihuSipder(CrawlSpider):
                           meta={'tmpitem': tmpitem},
                           callback=self.parse_follow,
                           errback=self.parse_err)
-
-        for num in range(1,self.maxindex):
-            print 'num:',num
-            time.sleep(random.randint(1,5) )
-            nexturl = "https://www.weixinqun.com/group?p="+str(num)
-            yield Request(nexturl,callback=self.parse,errback=self.parse_err)
+        if self.index == 0:
+            self.index = 1
+            for num in range(1,self.maxindex):
+                print 'num:',num
+                time.sleep(random.randint(1,5) )
+                nexturl = "https://www.weixinqun.com/group?p="+str(num)
+                yield Request(nexturl,callback=self.parse,errback=self.parse_err)
 
     def parse_follow(self, response):
         """
