@@ -108,7 +108,7 @@ class ZhihuSipder(CrawlSpider):
             # these exceptions come from HttpError spider middleware
             # you can get the non-200 response
             response = failure.value.response
-            self.logger.error('HttpError on %s', response.url)
+            self.logger.error('HttpError on %s, statuscode:', response.url, response.status)
 
         elif failure.check(DNSLookupError):
             # this is the original request
