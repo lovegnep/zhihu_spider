@@ -3,7 +3,9 @@ import os
 import re
 import json
 import time
+import random
 import datetime
+import time
 import province
 from urllib import urlencode
 from scrapy import log
@@ -52,6 +54,7 @@ class ZhihuSipder(CrawlSpider):
 
         for num in range(1,self.maxindex):
             print 'num:',num
+            time.sleep(random.randint(1,5) )
             nexturl = "https://www.weixinqun.com/group?p="+str(num)
             yield Request(nexturl,callback=self.parse,errback=self.parse_err)
 
