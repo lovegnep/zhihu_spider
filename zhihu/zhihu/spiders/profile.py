@@ -21,6 +21,8 @@ class ZhihuSipder(CrawlSpider):
     start_urls = [
         "https://www.weixinqun.com/group?p=0"
     ]
+    index=1
+    maxindex=10
     def parse(self, response):
         """
         解析用户主页
@@ -44,6 +46,10 @@ class ZhihuSipder(CrawlSpider):
                           meta={'tmpitem': tmpitem},
                           callback=self.parse_follow,
                           errback=self.parse_err)
+        if self.index < self.maxindex:
+            nexturl = "https://www.weixinqun.com/group?p="+str(self.index)
+            yield Request(nexturl,callback=self.parse_follow,errback=self.parse_err)
+            self.index = self.index+1
         """
         groupname=selector.xpath(
             '//div[@class="title-section ellipsis"]/span[@class="name"]/text()'
