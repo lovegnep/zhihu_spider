@@ -3297,7 +3297,7 @@ def getImgName(src):
     e=src.rfind('?')
     if e == -1:
         e=len(src)
-    return src[s:e]
+    return src[s+1:e]
 
 def calcDbSrc(src,pid):
     return 'https://www.5min8.com/uploads/'+str(pid)+getImgName(src)
