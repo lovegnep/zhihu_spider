@@ -21,7 +21,7 @@ class ZhihuSipder(CrawlSpider):
     start_urls = [
         "https://www.weixinqun.com/group?p=0"
     ]
-    index=1
+    index=0
     maxindex=10
     def parse(self, response):
         """
@@ -47,10 +47,11 @@ class ZhihuSipder(CrawlSpider):
                           callback=self.parse_follow,
                           errback=self.parse_err)
         if self.index < self.maxindex:
+            self.index = self.index + 1
             print 'self.index:',self.index
             nexturl = "https://www.weixinqun.com/group?p="+str(self.index)
             yield Request(nexturl,callback=self.parse,errback=self.parse_err)
-            self.index = self.index+1
+
         """
         groupname=selector.xpath(
             '//div[@class="title-section ellipsis"]/span[@class="name"]/text()'
@@ -231,4 +232,4 @@ class ZhihuSipder(CrawlSpider):
         )
 
     def parse_err(self, err):
-        log.ERROR('crawl {} failed'.format(err))
+        print 'crawl {} failed'.format(err)
