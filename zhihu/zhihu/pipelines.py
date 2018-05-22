@@ -41,24 +41,31 @@ class ZhihuPipeline(object):
     def close_spider(self, spider):
         self.client.close()
 
+    def downimg(self, src, type):
+        pid = os.getpid()
+        dbsrc = spiders.province.calcDbSrc(src,pid)
+        savename = str(pid)+spiders.province.getImgName(src)
+        savename = os.path.join(self.image_dir, savename)
+        download_pic.delay(src, savename)
+
     def _process_people(self, item):
         """
         存储用户信息
         """
+        pid = os.getpid()
+        gavaarc=item['groupavatar']
+        gqrsrc=item['groupQR']
+        mqrsrc=item['masterQR']
+        item['groupavatar'] = spiders.province.calcDbSrc(item['groupavatar'], pid)
+        item['groupQR'] = spiders.province.calcDbSrc(item['groupQR'], pid)
+        item['masterQR'] = spiders.province.calcDbSrc(item['masterQR'], pid)
         collection = self.db['qrmodels']
         groupQR = item['groupQR']
         collection.update({'groupQR': groupQR},
                           dict(item), upsert=True)
-
-        image_url = item['groupQR']
-        index = -1
-        pid=os.getpid()
-        imgname = spiders.province.getImgName(image_url)
-
-        item['groupQR']=spiders.province.calcDbSrc(image_url,pid)
-        image_path = os.path.join(self.image_dir, str(pid)+imgname)
-        print image_path, item['groupQR']
-        download_pic.delay(groupQR, image_path)
+        self.downimg(gavaarc, 'ga')
+        self.downimg(gqrsrc, 'gq')
+        self.downimg(mqrsrc, 'mq')
 
     def _process_relation(self, item):
         """
