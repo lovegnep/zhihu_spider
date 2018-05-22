@@ -24,75 +24,78 @@ class ZhihuSipder(CrawlSpider):
     name = "zhihu"
     allowed_domains = ["www.weixinqun.com"]
     start_urls = [
-        "https://www.weixinqun.com/group?p=0"
+        "https://www.weixinqun.com/group?p=0",
+        "https://www.weixinqun.com/personal?p=0",
+        "https://www.weixinqun.com/openid?p=0"
     ]
-    index=0
+    gindex=0
+    pindex=0
+    oindex=0
     maxindex=10
     def parse(self, response):
-        """
-        解析用户主页
-        """
+        end=len(response.url)
+        if response.url.rfind('?') != -1:
+            end = response.url.rfind('?')
+        name=response.url[(response.url.rfind('/')+1):end]
+        type=0
+        if name=="group":
+            type=1
+        elif name=="personal":
+            type=2
+        elif name=="openid":
+            type=3
+
         selector = Selector(response)
-        timeago = selector.xpath('//div[@class="border5"]/p[@class="wxNum ellips"]/span[@class="caaa"]/text()').extract()
-        groupavatars = selector.xpath('//a[contains(@href, "/group?id=")]/img/@src').extract()
-        groupnames = selector.xpath('//a[contains(@href, "/group?id=")]/@title').extract()
-        locations = selector.xpath('//a[@class="btnCity"]/text()').extract()
-        nexturls = selector.xpath('//div[@class="border5"]/a[contains(@href, "/group?id=")]/@href').extract()
-        print nexturls, len(nexturls)
+        xparse='//div[@class="border5"]/a[contains(@href, "/'+name+'?id=")]/@href'
+        nexturls = selector.xpath(xparse).extract()
+
         for index in range(len(nexturls)):
             print index
             complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
-            tmpitem = {
-                'groupname':groupnames[index],
-                'groupavatar':groupavatars[index],
-                'locations':locations[index]
-            }
             yield Request(complete_url,
-                          meta={'tmpitem': tmpitem},
+                          meta={'type': type},
                           callback=self.parse_follow,
                           errback=self.parse_err)
-        if self.index == 0:
-            self.index = 1
+        if self.gindex == 0 and type==1:
+            self.gindex = 1
             for num in range(1,self.maxindex):
                 print 'num:',num
                 time.sleep(random.randint(1,5) )
-                nexturl = "https://www.weixinqun.com/group?p="+str(num)
+                nexturl = "https://www.weixinqun.com/"+name+"?p="+str(num)
+                yield Request(nexturl,callback=self.parse,errback=self.parse_err)
+        if self.pindex == 0 and type==2:
+            self.pindex = 1
+            for num in range(1,self.maxindex):
+                print 'num:',num
+                time.sleep(random.randint(1,5) )
+                nexturl = "https://www.weixinqun.com/"+name+"?p="+str(num)
+                yield Request(nexturl,callback=self.parse,errback=self.parse_err)
+        if self.oindex == 0 and type==3:
+            self.oindex = 1
+            for num in range(1,self.maxindex):
+                print 'num:',num
+                time.sleep(random.randint(1,5) )
+                nexturl = "https://www.weixinqun.com/"+name+"?p="+str(num)
                 yield Request(nexturl,callback=self.parse,errback=self.parse_err)
 
     def parse_follow(self, response):
-        """
-        解析follow数据
-        """
-        tmpitem = response.meta['tmpitem']
+
+        type = response.meta['type']
         selector = Selector(response)
-        qrs = selector.xpath('//span[@class="shiftcode"]/img/@src').extract()
-        groupQR = qrs[1]
-        masterQR = qrs[0]
-        abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0]
-        otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
-        industry = otherinfos[0]
-        location = province.getLocationByName(otherinfos[1].strip())
-        grouptag = province.rmspace(re.split('[ |/,]',otherinfos[2].strip()))
-        tags = province.jiebaStr(tmpitem['groupname'],abstract,otherinfos[2])
-        createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
-        createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
-        updateTime = createTime
-        masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1]
+        qrsrc=''
+        if type==3:
+            qrsrc = selector.xpath('//div[@class="iframe"]/img/@src').extract()[0]
+        elif type==1:
+            qrsrc=selector.xpath('//div[@class="iframe"]/span[@class="shiftcode"]/img/@src').extract()[1]
+        elif type==2:
+            qrsrc = selector.xpath('//div[@class="iframe"]/img/@src').extract()[0]
+
+        if qrsrc=='':
+            self.logger.error('none src: url:%s, type:%d',response.url, type)
+            return
         item = ZhihuPeopleItem(
-            type=1,
-            source=2,
-            industry=industry,
-            location=location,
-            groupname=tmpitem['groupname'],
-            abstract=abstract,
-            grouptag=grouptag,
-            masterwx=masterwx,
-            groupavatar=tmpitem['groupavatar'],
-            groupQR=groupQR,
-            masterQR=masterQR,
-            createTime=createTime,
-            updateTime=updateTime,
-            tags=tags
+            type=type,
+            qrsrc=qrsrc,
         )
         yield item
 

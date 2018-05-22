@@ -49,23 +49,17 @@ class ZhihuPipeline(object):
         download_pic.delay(src, savename)
 
     def _process_people(self, item):
-        """
-        存储用户信息
-        """
-        pid = os.getpid()
-        gavaarc=item['groupavatar']
-        gqrsrc=item['groupQR']
-        mqrsrc=item['masterQR']
-        item['groupavatar'] = spiders.province.calcDbSrc(item['groupavatar'], pid)
-        item['groupQR'] = spiders.province.calcDbSrc(item['groupQR'], pid)
-        item['masterQR'] = spiders.province.calcDbSrc(item['masterQR'], pid)
-        collection = self.db['qrmodels']
-        groupQR = item['groupQR']
-        collection.update({'groupQR': groupQR},
-                          dict(item), upsert=True)
-        self.downimg(gavaarc, 'ga')
-        self.downimg(gqrsrc, 'gq')
-        self.downimg(mqrsrc, 'mq')
+        type=item['type']
+        qrsrc=item['qrsrc']
+        savename = spiders.province.getImgName(qrsrc)
+        if type==1:
+            savename = os.path.join('/home/zhihu_spider/images/group', savename)
+        elif type==2:
+            savename = os.path.join('/home/zhihu_spider/images/person', savename)
+        elif type==3:
+            savename = os.path.join('/home/zhihu_spider/images/public', savename)
+
+        download_pic.delay(qrsrc, savename)
 
     def _process_relation(self, item):
         """

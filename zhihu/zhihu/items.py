@@ -9,45 +9,8 @@ from scrapy import Item, Field
 
 
 class ZhihuPeopleItem(Item):
-    """知乎用户属性
-
-    Attributes:
-        nickname 用户名
-        zhihu_id 用户id
-        location 位置
-        business 行业
-        gender 性别
-        employment 公司
-        position 职位
-        education 教育情况
-        image_url 头像图片url
-    """
-
-    uploader = Field()
     type = Field()
-    source = Field()
-    industry = Field()
-    location = Field()
-    groupname = Field()
-    abstract = Field()
-    grouptag = Field()
-    tags = Field()
-    masterwx = Field()
-    groupavatar = Field()
-    groupQR = Field()
-    masterQR = Field()
-    createTime = Field()
-    updateTime = Field()
-    viewCount = Field()
-    likeCount = Field()
-    commentCount = Field()
-    gender = Field()
-    birthday = Field()
-    delete = Field()
-    secret = Field()
-    f5Time = Field()
-
-
+    qrsrc = Field()
 
 class ZhihuRelationItem(Item):
     """知乎用户关系
