@@ -22,12 +22,7 @@ class ZhihuSipder(CrawlSpider):
     name = "zhihu"
     allowed_domains = ["www.weixinqun.com"]
     start_urls = [
-        "https://www.weixinqun.com/group?p=0",
-        "https://www.weixinqun.com/group?p=1",
-        "https://www.weixinqun.com/group?p=2",
-        "https://www.weixinqun.com/group?p=3",
-        "https://www.weixinqun.com/group?p=4",
-        "https://www.weixinqun.com/group?p=5"
+        "https://www.weixinqun.com/group?p=0"
     ]
     index=0
     maxindex=10
@@ -54,12 +49,12 @@ class ZhihuSipder(CrawlSpider):
                           meta={'tmpitem': tmpitem},
                           callback=self.parse_follow,
                           errback=self.parse_err)
-        '''
+
         for num in range(1,self.maxindex):
             print 'num:',num
             nexturl = "https://www.weixinqun.com/group?p="+str(num)
             yield Request(nexturl,callback=self.parse,errback=self.parse_err)
-       '''
+
     def parse_follow(self, response):
         """
         解析follow数据
