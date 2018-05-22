@@ -5,6 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import os
+import spiders.province
 
 from pymongo import MongoClient
 from zhihu.settings import MONGO_URI, PROJECT_DIR
@@ -51,13 +52,12 @@ class ZhihuPipeline(object):
 
         image_url = item['groupQR']
         index = -1
-        if image_url.rfind('?') == -1 :
-            index = len(image_url)
-        else:
-            index = image_url.rfind('?')
-        imagename = image_url[(image_url.rfind('/')+1):index]
-        print imagename, image_url
-        image_path = os.path.join(self.image_dir, imagename)
+        pid=os.getpid()
+        imgname = spiders.province.getImgName(image_url)
+
+        item['groupQR']=spiders.province.calcDbSrc(image_url,pid)
+        image_path = os.path.join(self.image_dir, pid+imgname)
+        print image_path, item['groupQR']
         download_pic.delay(groupQR, image_path)
 
     def _process_relation(self, item):

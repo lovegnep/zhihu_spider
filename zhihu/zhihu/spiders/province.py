@@ -1,5 +1,6 @@
 # coding=UTF-8
 import re
+import os
 import jieba
 '''
 import sys
@@ -3298,5 +3299,5 @@ def getImgName(src):
         e=len(src)
     return src[s:e]
 
-def calcDbSrc(src):
-    return 'https://www.5min8.com/uploads/'+getImgName(src)
+def calcDbSrc(src,pid):
+    return 'https://www.5min8.com/uploads/'+pid+getImgName(src)
