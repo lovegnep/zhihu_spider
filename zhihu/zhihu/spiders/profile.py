@@ -66,21 +66,21 @@ class ZhihuSipder(CrawlSpider):
             self.gindex = 1
             for num in range(1, self.maxgindex):
                 print 'num:', num
-                time.sleep(random.randint(1, 5))
+                time.sleep(random.randint(10, 20))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
         if self.pindex == 0 and type == 2:
             self.pindex = 1
             for num in range(1, self.maxpindex):
                 print 'num:', num
-                time.sleep(random.randint(1, 5))
+                time.sleep(random.randint(10, 20))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
         if self.oindex == 0 and type == 3:
             self.oindex = 1
             for num in range(1, self.maxoindex):
                 print 'num:', num
-                time.sleep(random.randint(1, 5))
+                time.sleep(random.randint(10, 20))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
 
