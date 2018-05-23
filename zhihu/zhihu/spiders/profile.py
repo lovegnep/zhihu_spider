@@ -191,7 +191,7 @@ class ZhihuSipder(CrawlSpider):
     def parse_err(self, failure):
         # log all failures
         self.logger.error(repr(failure))
-
+        self.logger.error('request error happen:',failure)
         # in case you want to do something special for some errors,
         # you may need the failure's type:
 
