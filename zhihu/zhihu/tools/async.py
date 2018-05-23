@@ -28,4 +28,5 @@ def download_pic(image_url, image_path):
         with open(image_path, 'wb') as img:
             img.write(image.content)
     except Exception as exc:
+        print 'download img fail:', image_url, image_path
         print exc
