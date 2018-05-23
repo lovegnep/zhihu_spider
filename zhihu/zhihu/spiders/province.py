@@ -2,6 +2,9 @@
 import re
 import os
 import jieba
+from jieba import analyse
+# 引入TF-IDF关键词抽取接口
+tfidf = analyse.extract_tags
 '''
 import sys
 reload(sys)
@@ -3269,17 +3272,18 @@ def getLocationByName(name):
     return 0
 
 def jiebaStr(groupname,abstract,grouptag):
-    str=groupname.strip()+abstract.strip()+grouptag.strip()
+    str=groupname.strip()+','+abstract.strip()+','+grouptag.strip()
 
     r = '[’!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+'
     str=re.sub(r, u'', str)
-    res = jieba.lcut_for_search(str)
-    res = list(set(res))
+    res = tfidf(str)
+    '''res = list(set(res))
     newres=[]
     for val in res:
         if re.search(ur'[a-zA-Z0-9\u2E80-\u9FFF]+',val):
             newres.append(val)
-    return newres
+            '''
+    return res
 
 def rmspace(arr):
     if len(arr) <= 0:
