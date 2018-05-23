@@ -31,9 +31,9 @@ class ZhihuSipder(CrawlSpider):
     gindex=0
     pindex=0
     oindex=0
-    maxgindex=10
-    maxpindex=10
-    maxoindex=10
+    maxgindex=2
+    maxpindex=2
+    maxoindex=2
     def parse(self, response):
         end = len(response.url)
         if response.url.rfind('?') != -1:
