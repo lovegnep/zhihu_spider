@@ -52,6 +52,18 @@ class ZhihuPipeline(object):
         """
         存储用户信息
         """
+        type=item['type']
+        if type==1:
+            self._process_group(item)
+        elif type==2:
+            self._process_personal(item)
+        elif type==3:
+            self._process_openid(item)
+
+    def _process_group(self, item):
+        """
+        存储用户信息
+        """
         pid = os.getpid()
         gavaarc=item['groupavatar']
         gqrsrc=item['groupQR']
@@ -66,6 +78,39 @@ class ZhihuPipeline(object):
         self.downimg(gavaarc, 'ga')
         self.downimg(gqrsrc, 'gq')
         self.downimg(mqrsrc, 'mq')
+    def _process_personal(self, item):
+        """
+        存储用户信息
+        """
+        pid = os.getpid()
+        gavaarc=item['groupavatar']
+        gqrsrc=item['groupQR']
+
+        item['groupavatar'] = spiders.province.calcDbSrc(item['groupavatar'], pid)
+        item['groupQR'] = spiders.province.calcDbSrc(item['groupQR'], pid)
+
+        collection = self.db['qrmodels']
+
+        collection.update({'masterwx': item['masterwx'], 'source':2},
+                          dict(item), upsert=True)
+        self.downimg(gavaarc, 'ga')
+        self.downimg(gqrsrc, 'gq')
+    def _process_openid(self, item):
+        """
+        存储用户信息
+        """
+        pid = os.getpid()
+        gavaarc=item['groupavatar']
+        gqrsrc=item['groupQR']
+        item['groupavatar'] = spiders.province.calcDbSrc(item['groupavatar'], pid)
+        item['groupQR'] = spiders.province.calcDbSrc(item['groupQR'], pid)
+
+        collection = self.db['qrmodels']
+
+        collection.update({'masterwx': item['masterwx'], 'source':2},
+                          dict(item), upsert=True)
+        self.downimg(gavaarc, 'ga')
+        self.downimg(gqrsrc, 'gq')
 
     def _process_relation(self, item):
         """
