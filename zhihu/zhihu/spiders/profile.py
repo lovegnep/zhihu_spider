@@ -56,7 +56,7 @@ class ZhihuSipder(CrawlSpider):
         groupavatars = selector.xpath('//a[contains(@href, "/'+name+'?id=")]/img/@src').extract()
 
         for index in range(len(nexturls)):
-            print index
+            time.sleep(random.randint(1, 10))
             complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
             yield Request(complete_url,
                           meta={'type': type,'groupavatar':groupavatars[index]},
@@ -191,7 +191,7 @@ class ZhihuSipder(CrawlSpider):
     def parse_err(self, failure):
         # log all failures
         self.logger.error(repr(failure))
-        self.logger.error('request error happen:',failure)
+        print 'request error happen:',failure
         # in case you want to do something special for some errors,
         # you may need the failure's type:
 
