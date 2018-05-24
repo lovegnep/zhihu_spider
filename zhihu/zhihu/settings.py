@@ -101,7 +101,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(os.path.curdir))
 MONGO_URI = 'mongodb://39.108.56.116:20006'
 
 DOWNLOADER_MIDDLEWARES = {
-    'mySpider.middlewares.monitor': 100
+    'zhihu.middlewares.monitor': 100
 }
 
 # pipeline设置
