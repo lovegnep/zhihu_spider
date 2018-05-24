@@ -10,13 +10,11 @@ class monitor(object):
         logger.info('monitor process_request:%s', request.url)
 
     def process_response(self, request, response, spider):
-        if response.status >= 400:
-            reason = response.status
-            self._faillog(request, u'HTTPERROR', reason, spider)
+        logger.info('monitor process_response:%d',response.status)
         return response
 
     def process_exception(self, request, exception, spider):
-        self._faillog(request, u'EXCEPTION', exception, spider)
+        logger.info('monitor process_exception:%s',  request.url)
         return request
 
     def _faillog(self, request, errorType, reason, spider):
