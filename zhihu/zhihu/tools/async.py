@@ -19,14 +19,15 @@ def download_pic(image_url, image_path):
         image_url (string): 图片链接
         image_path (string): 图片路径
     """
-    LOGGER.info('download_pic: %s',image_url)
+
     if not (image_url and image_path):
-        LOGGER.INFO('illegal parameter')
+        LOGGER.info('illegal parameter')
 
     try:
+        LOGGER.info('download_pic: %s', image_url)
         image = requests.get(image_url, stream=True)
         with open(image_path, 'wb') as img:
             img.write(image.content)
     except Exception as exc:
-        print 'download img fail:', image_url, image_path
+        LOGGER.info('download img fail:%s', image_url)
         print exc
