@@ -100,6 +100,10 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(os.path.curdir))
 # mongodb配置
 MONGO_URI = 'mongodb://39.108.56.116:20006'
 
+DOWNLOADER_MIDDLEWARES = {
+    'mySpider.middlewares.monitor': 100
+}
+
 # pipeline设置
 ITEM_PIPELINES = {
     'zhihu.pipelines.ZhihuPipeline': 500,
