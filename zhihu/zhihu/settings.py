@@ -110,7 +110,7 @@ ITEM_PIPELINES = {
 }
 
 # 异步任务队列
-BROKER_URL = 'amqp://lovegnep:liuyang15@47.105.36.1:5672//'
+BROKER_URL = 'amqp://lovegnep:liuyang15@172.31.215.138:5672//'
 
 DOWNLOAD_HANDLERS = {
         'S3':None,
