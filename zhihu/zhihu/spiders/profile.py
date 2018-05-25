@@ -7,6 +7,7 @@ import random
 import datetime
 import time
 import province
+import logging
 from urllib import urlencode
 from scrapy import log
 from scrapy.spiders import CrawlSpider
@@ -19,6 +20,8 @@ from zhihu.constants import Gender, People, HEADER
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError
 from twisted.internet.error import TimeoutError, TCPTimedOutError
+
+logger=logging.getLogger()
 
 class ZhihuSipder(CrawlSpider):
     name = "zhihu"
@@ -34,6 +37,9 @@ class ZhihuSipder(CrawlSpider):
     maxgindex=2
     maxpindex=2
     maxoindex=2
+    gcount=0
+    pcount=0
+    ocount=0
     def parse(self, response):
         end = len(response.url)
         if response.url.rfind('?') != -1:
@@ -54,9 +60,10 @@ class ZhihuSipder(CrawlSpider):
         xparse = '//div[@class="border5"]/a[contains(@href, "/' + name + '?id=")]/@href'
         nexturls = selector.xpath(xparse).extract()
         groupavatars = selector.xpath('//a[contains(@href, "/'+name+'?id=")]/img/@src').extract()
-
+        if len(nexturls) != 42 or len(groupavatars) != 42:
+            logger.warn('not enough items. url:%s, urlnum:%d, groupnum:%d', response.url, len(nexturls), len(groupavatars))
         for index in range(len(nexturls)):
-            time.sleep(random.randint(1, 10))
+            time.sleep(random.randint(1, 3))
             complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
             yield Request(complete_url,
                           meta={'type': type,'groupavatar':groupavatars[index]},
@@ -66,25 +73,27 @@ class ZhihuSipder(CrawlSpider):
             self.gindex = 1
             for num in range(1, self.maxgindex):
                 print 'num:', num
-                time.sleep(random.randint(10, 20))
+                time.sleep(random.randint(1, 5))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
         if self.pindex == 0 and type == 2:
             self.pindex = 1
             for num in range(1, self.maxpindex):
                 print 'num:', num
-                time.sleep(random.randint(10, 20))
+                time.sleep(random.randint(1, 5))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
         if self.oindex == 0 and type == 3:
             self.oindex = 1
             for num in range(1, self.maxoindex):
                 print 'num:', num
-                time.sleep(random.randint(10, 20))
+                time.sleep(random.randint(1, 5))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
 
     def parse_group(self, response):
+        self.gcount = self.gcount+1
+        logger.debug('parse_group count:%d',self.gcount)
         type=response.meta['type']
         groupavatar=response.meta['groupavatar']
 
@@ -103,6 +112,11 @@ class ZhihuSipder(CrawlSpider):
         createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
         masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1].strip()
+        if groupavatar.find('http') == -1:
+            logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
+        if groupQR.find('http') == -1 or masterQR.find('http') == -1:
+            logger.warn('invalid gorm: url:%s, groupQR:%s, masterQR:%s', response.url, groupQR, masterQR)
+
         item = ZhihuPeopleItem(
             type=1,
             source=2,
@@ -121,6 +135,8 @@ class ZhihuSipder(CrawlSpider):
         )
         yield item
     def parse_personal(self, response):
+        self.pcount = self.pcount+1
+        logger.debug('parse_personal count:%d',self.pcount)
         type=response.meta['type']
         groupavatar=response.meta['groupavatar']
 
@@ -138,6 +154,10 @@ class ZhihuSipder(CrawlSpider):
         createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
         masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1].strip()
+        if groupavatar.find('http') == -1:
+            logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
+        if groupQR.find('http') == -1:
+            logger.warn('invalid groupQR: url:%s, groupQR:%s', response.url, groupQR)
         item = ZhihuPeopleItem(
             type=2,
             source=2,
@@ -155,6 +175,8 @@ class ZhihuSipder(CrawlSpider):
         )
         yield item
     def parse_openid(self, response):
+        self.ocount = self.ocount+1
+        logger.debug('parse_openid count:%d',self.ocount)
         type=response.meta['type']
         groupavatar=response.meta['groupavatar']
 
@@ -171,6 +193,10 @@ class ZhihuSipder(CrawlSpider):
         createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
         masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1].strip()
+        if groupavatar.find('http') == -1:
+            logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
+        if groupQR.find('http') == -1:
+            logger.warn('invalid groupQR: url:%s, groupQR:%s', response.url, groupQR)
         item = ZhihuPeopleItem(
             type=3,
             source=2,
