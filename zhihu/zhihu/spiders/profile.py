@@ -34,9 +34,9 @@ class ZhihuSipder(CrawlSpider):
     gindex=0
     pindex=0
     oindex=0
-    maxgindex=2
-    maxpindex=2
-    maxoindex=2
+    maxgindex=21
+    maxpindex=21
+    maxoindex=21
     gcount=0
     pcount=0
     ocount=0
