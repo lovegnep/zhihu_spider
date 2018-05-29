@@ -2,6 +2,10 @@
 import logging
 import codecs
 import datetime
+import random
+# 导入官方文档对应的HttpProxyMiddleware
+from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
+from zhihu.client.py_cli import ProxyFetcher
 
 logger=logging.getLogger()
 
@@ -24,3 +28,12 @@ class monitor(object):
                         'error': errorType,
                         'url': request.url,
                         'reason': reason})
+
+class IPPOOlS(HttpProxyMiddleware):
+
+    def process_request(self, request, spider):
+        args = dict(host='127.0.0.1', port=6379, password='123456', db=0)
+        fetcher = ProxyFetcher('zhihu', strategy='greedy', redis_args=args)
+        thisip = fetcher.get_proxy()
+        print("当前使用proxy是："+ thisip)
+        request.meta["proxy"] = fetcher.get_proxy()

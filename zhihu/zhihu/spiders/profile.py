@@ -6,9 +6,8 @@ import time
 import random
 import datetime
 import time
-import province
+from .province import *
 import logging
-from urllib import urlencode
 from scrapy import log
 from scrapy.spiders import CrawlSpider
 from scrapy.selector import Selector
@@ -63,7 +62,7 @@ class ZhihuSipder(CrawlSpider):
         if len(nexturls) != 42 or len(groupavatars) != 42:
             logger.warn('not enough items. url:%s, urlnum:%d, groupnum:%d', response.url, len(nexturls), len(groupavatars))
         for index in range(len(nexturls)):
-            time.sleep(random.randint(1, 3))
+            #time.sleep(random.randint(10, 20))
             complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
             yield Request(complete_url,
                           meta={'type': type,'groupavatar':groupavatars[index]},
@@ -72,22 +71,19 @@ class ZhihuSipder(CrawlSpider):
         if self.gindex == 0 and type == 1:
             self.gindex = 1
             for num in range(1, self.maxgindex):
-                print 'num:', num
-                time.sleep(random.randint(1, 5))
+                #time.sleep(random.randint(10, 20))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
         if self.pindex == 0 and type == 2:
             self.pindex = 1
             for num in range(1, self.maxpindex):
-                print 'num:', num
-                time.sleep(random.randint(1, 5))
+                #time.sleep(random.randint(10, 20))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
         if self.oindex == 0 and type == 3:
             self.oindex = 1
             for num in range(1, self.maxoindex):
-                print 'num:', num
-                time.sleep(random.randint(1, 5))
+                #time.sleep(random.randint(10, 20))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
 
@@ -105,9 +101,9 @@ class ZhihuSipder(CrawlSpider):
         abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
         industry = otherinfos[0].strip()
-        location = province.getLocationByName(otherinfos[1].strip())
-        grouptag = province.rmspace(re.split('[ |/,.，。]',otherinfos[2].strip()))
-        tags = province.jiebaStr(groupname,abstract,otherinfos[2].strip())
+        location = getLocationByName(otherinfos[1].strip())
+        grouptag = rmspace(re.split('[ |/,.，。]',otherinfos[2].strip()))
+        tags = jiebaStr(groupname,abstract,otherinfos[2].strip())
         createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
         createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
@@ -131,7 +127,9 @@ class ZhihuSipder(CrawlSpider):
             masterQR=masterQR,
             createTime=createTime,
             updateTime=updateTime,
-            tags=tags
+            tags=tags,
+            delete=False,
+            secret=False
         )
         yield item
     def parse_personal(self, response):
@@ -147,9 +145,9 @@ class ZhihuSipder(CrawlSpider):
         abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
         industry = otherinfos[0].strip()
-        location = province.getLocationByName(otherinfos[1].strip())
-        grouptag = province.rmspace(re.split('[ |/,]',otherinfos[2].strip()))
-        tags = province.jiebaStr(groupname,abstract,otherinfos[2].strip())
+        location = getLocationByName(otherinfos[1].strip())
+        grouptag = rmspace(re.split('[ |/,]',otherinfos[2].strip()))
+        tags = jiebaStr(groupname,abstract,otherinfos[2].strip())
         createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
         createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
@@ -171,7 +169,9 @@ class ZhihuSipder(CrawlSpider):
             groupQR=groupQR,
             createTime=createTime,
             updateTime=updateTime,
-            tags=tags
+            tags=tags,
+            delete=False,
+            secret=False
         )
         yield item
     def parse_openid(self, response):
@@ -186,9 +186,9 @@ class ZhihuSipder(CrawlSpider):
         abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
         industry = otherinfos[0].strip()
-        location = province.getLocationByName(otherinfos[1].strip())
-        grouptag = province.rmspace(re.split('[ |/,]',otherinfos[2].strip()))
-        tags = province.jiebaStr(groupname,abstract,otherinfos[2].strip())
+        location = getLocationByName(otherinfos[1].strip())
+        grouptag = rmspace(re.split('[ |/,]',otherinfos[2].strip()))
+        tags = jiebaStr(groupname,abstract,otherinfos[2].strip())
         createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
         createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
@@ -210,14 +210,16 @@ class ZhihuSipder(CrawlSpider):
             groupQR=groupQR,
             createTime=createTime,
             updateTime=updateTime,
-            tags=tags
+            tags=tags,
+            delete=False,
+            secret=False
         )
         yield item
 
     def parse_err(self, failure):
         # log all failures
         self.logger.error(repr(failure))
-        print 'request error happen:',failure
+        logger.warn('request error happen:',failure)
         # in case you want to do something special for some errors,
         # you may need the failure's type:
 

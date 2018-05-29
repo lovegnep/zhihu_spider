@@ -3261,11 +3261,11 @@ cityJson = [
 
 def getLocationByName(name):
     leng = len(cityJson)
-    p = re.compile(ur'' + name + '')
+    p = re.compile(r'' + name + '')
     #print p
     for val in cityJson :
         #print val
-        searchObj = p.search(val['item_name'].decode('utf8'))
+        searchObj = p.search(val['item_name'])
 
         if searchObj:
             return val['item_code']
@@ -3292,7 +3292,7 @@ def rmspace(arr):
     res = list(set(arr))
     newres=[]
     for val in res:
-        if re.search(ur'[a-zA-Z0-9\u2E80-\u9FFF]+',re.sub(r,u'',val)):
+        if re.search(r'[a-zA-Z0-9\u2E80-\u9FFF]+',re.sub(r,u'',val)):
             newres.append(re.sub(r,'',val))
     return newres
 

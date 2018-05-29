@@ -30,4 +30,3 @@ def download_pic(image_url, image_path):
             img.write(image.content)
     except Exception as exc:
         LOGGER.info('download img fail:%s', image_url)
-        print exc

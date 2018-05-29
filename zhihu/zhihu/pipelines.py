@@ -5,7 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import os
-import spiders.province
+from zhihu.spiders.province import *
 
 from pymongo import MongoClient
 from zhihu.settings import MONGO_URI, PROJECT_DIR
@@ -20,7 +20,7 @@ class ZhihuPipeline(object):
     def __init__(self, mongo_uri, mongo_db, image_dir):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
-        self.image_dir = '/home/zhihu_spider/images'
+        self.image_dir = '/home/gnep/work/zhihu_spider/images'
         self.client = None
         self.db= None
 
@@ -43,8 +43,8 @@ class ZhihuPipeline(object):
 
     def downimg(self, src, type1,type2):
         pid = os.getpid()
-        dbsrc = spiders.province.calcDbSrc(src,pid,type1, type2)
-        savename = str(pid)+spiders.province.getImgName(src)
+        dbsrc = calcDbSrc(src,pid,type1, type2)
+        savename = str(pid)+'_'+str(type1)+'_'+str(type2)+'_'+getImgName(src)
         savename = os.path.join(self.image_dir, savename)
         download_pic.delay(src, savename)
 
@@ -68,9 +68,9 @@ class ZhihuPipeline(object):
         gavaarc=item['groupavatar']
         gqrsrc=item['groupQR']
         mqrsrc=item['masterQR']
-        item['groupavatar'] = spiders.province.calcDbSrc(item['groupavatar'], pid,1,1)
-        item['groupQR'] = spiders.province.calcDbSrc(item['groupQR'], pid,1,2)
-        item['masterQR'] = spiders.province.calcDbSrc(item['masterQR'], pid,1,3)
+        item['groupavatar'] = calcDbSrc(item['groupavatar'], pid,1,1)
+        item['groupQR'] = calcDbSrc(item['groupQR'], pid,1,2)
+        item['masterQR'] = calcDbSrc(item['masterQR'], pid,1,3)
         collection = self.db['qrmodels']
         groupQR = item['groupQR']
         collection.update({'groupQR': groupQR},
@@ -86,8 +86,8 @@ class ZhihuPipeline(object):
         gavaarc=item['groupavatar']
         gqrsrc=item['groupQR']
 
-        item['groupavatar'] = spiders.province.calcDbSrc(item['groupavatar'], pid,2,1)
-        item['groupQR'] = spiders.province.calcDbSrc(item['groupQR'], pid,2,2)
+        item['groupavatar'] = calcDbSrc(item['groupavatar'], pid,2,1)
+        item['groupQR'] = calcDbSrc(item['groupQR'], pid,2,2)
 
         collection = self.db['qrmodels']
 
@@ -102,8 +102,8 @@ class ZhihuPipeline(object):
         pid = os.getpid()
         gavaarc=item['groupavatar']
         gqrsrc=item['groupQR']
-        item['groupavatar'] = spiders.province.calcDbSrc(item['groupavatar'], pid,3,1)
-        item['groupQR'] = spiders.province.calcDbSrc(item['groupQR'], pid,3,2)
+        item['groupavatar'] = calcDbSrc(item['groupavatar'], pid,3,1)
+        item['groupQR'] = calcDbSrc(item['groupQR'], pid,3,2)
 
         collection = self.db['qrmodels']
 

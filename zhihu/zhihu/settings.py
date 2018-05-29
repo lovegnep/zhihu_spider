@@ -98,10 +98,11 @@ SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
 PROJECT_DIR = os.path.dirname(os.path.abspath(os.path.curdir))
 
 # mongodb配置
-MONGO_URI = 'mongodb://39.108.56.116:20006'
+MONGO_URI = 'mongodb://127.0.0.1:27017'
 
 DOWNLOADER_MIDDLEWARES = {
-    'zhihu.middlewares.monitor': 100
+    'zhihu.middlewares.monitor': 100,
+    'zhihu.middlewares.IPPOOlS' : 125
 }
 
 # pipeline设置
@@ -110,7 +111,7 @@ ITEM_PIPELINES = {
 }
 
 # 异步任务队列
-BROKER_URL = 'amqp://lovegnep:liuyang15@172.31.215.138:5672//'
+BROKER_URL = 'amqp://lovegnep:liuyang15@127.0.0.1:5672//'
 
 DOWNLOAD_HANDLERS = {
         'S3':None,
