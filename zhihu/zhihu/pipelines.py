@@ -28,12 +28,13 @@ class ZhihuPipeline(object):
     def from_crawler(cls, crawler):
         return cls(
             mongo_uri=MONGO_URI,
-            mongo_db='zhihu',
+            mongo_db='wcgroup',
             image_dir=os.path.join(PROJECT_DIR, 'images')
         )
 
     def open_spider(self, spider):
-        self.client = MongoClient(self.mongo_uri)
+        #self.client = MongoClient(self.mongo_uri)
+        self.client = MongoClient('47.98.136.138:20005',username='lovegnep_wcgroup',password='liuyang15',authSource='wcgroup',authMechanism='SCRAM-SHA-1')
         self.db = self.client[self.mongo_db]
         if not os.path.exists(self.image_dir):
             os.mkdir(self.image_dir)
