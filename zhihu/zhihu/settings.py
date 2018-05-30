@@ -33,7 +33,7 @@ USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) ' \
 #CONCURRENT_REQUESTS_PER_IP=16
 
 # Disable cookies (enabled by default)
-COOKIES_ENABLED = True
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED=False
@@ -102,7 +102,9 @@ MONGO_URI = 'mongodb://47.98.136.138:20005'
 
 DOWNLOADER_MIDDLEWARES = {
     'zhihu.middlewares.monitor': 100,
-    'zhihu.middlewares.IPPOOlS' : 125,
+    'zhihu.middlewares.JobboleProxyMiddleware' : 125,
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'zhihu.middlewares.RotateUserAgentMiddleware' : 400,
     'zhihu.middlewares.respd' : 1000,
 }
 
@@ -118,10 +120,10 @@ DOWNLOAD_HANDLERS = {
         'S3':None,
 }
 
-LOG_FILE = "mySpider.log"
+#LOG_FILE = "mySpider.log"
 
 FEED_EXPORT_ENCODING = 'utf-8'
 
 RANDOMIZE_DOWNLOAD_DELAY=False
-DOWNLOAD_DELAY=60/40.0
+DOWNLOAD_DELAY=0.5
 CONCURRENT_REQUESTS_PER_IP=40
