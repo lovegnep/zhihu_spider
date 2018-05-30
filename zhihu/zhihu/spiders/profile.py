@@ -190,6 +190,7 @@ class ZhihuSipder(CrawlSpider):
             logger.warn('parse_openid: invalid length, now will retry the url:'+response.url)
             yield Request(response.url, callback=self.parse_openid, errback=self.parse_err)
             return
+        groupQR = groupQRs[0]
         groupname=selector.xpath('//span[@class="des_info_text"]/b/text()').extract()[0].strip()
         abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
