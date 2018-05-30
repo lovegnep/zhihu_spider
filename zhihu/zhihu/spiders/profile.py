@@ -95,6 +95,10 @@ class ZhihuSipder(CrawlSpider):
 
         selector = Selector(response)
         qrs = selector.xpath('//span[@class="shiftcode"]/img/@src').extract()
+        if len(qrs) != 2:
+            logger.warn('parse_group:invalid length, now will retry the  url:'+response.url)
+            yield Request(response.url, callback=self.parse_group, errback=self.parse_err)
+            return
         groupQR = qrs[1]
         masterQR = qrs[0]
         groupname=selector.xpath('//span[@class="des_info_text"]/b/text()').extract()[0].strip()
@@ -181,7 +185,12 @@ class ZhihuSipder(CrawlSpider):
         groupavatar=response.meta['groupavatar']
 
         selector = Selector(response)
-        groupQR = selector.xpath('//div[@class="iframe"]/img/@src').extract()[0]
+        groupQRs = selector.xpath('//div[@class="iframe"]/img/@src').extract()
+        if len(groupQRs) != 2:
+            logger.warn('parse_openid: invalid length, now will retry the url:'+response.url)
+            logger.warn('parse_group:invalid length, now will retry the  url:'+response.url)
+            yield Request(response.url, callback=self.parse_openid, errback=self.parse_err)
+            return 
         groupname=selector.xpath('//span[@class="des_info_text"]/b/text()').extract()[0].strip()
         abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
