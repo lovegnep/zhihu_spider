@@ -186,11 +186,10 @@ class ZhihuSipder(CrawlSpider):
 
         selector = Selector(response)
         groupQRs = selector.xpath('//div[@class="iframe"]/img/@src').extract()
-        if len(groupQRs) != 2:
+        if len(groupQRs) != 1:
             logger.warn('parse_openid: invalid length, now will retry the url:'+response.url)
-            logger.warn('parse_group:invalid length, now will retry the  url:'+response.url)
             yield Request(response.url, callback=self.parse_openid, errback=self.parse_err)
-            return 
+            return
         groupname=selector.xpath('//span[@class="des_info_text"]/b/text()').extract()[0].strip()
         abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
