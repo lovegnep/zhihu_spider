@@ -68,19 +68,19 @@ class ZhihuSipder(CrawlSpider):
                           meta={'type': type,'groupavatar':groupavatars[index]},
                           callback=callback,
                           errback=self.parse_err)
-        if self.gindex == 0 and type == 1:
+        if self.gindex == 0 and type == 1 and self.maxgindex > 0:
             self.gindex = 1
             for num in range(1, self.maxgindex):
                 #time.sleep(random.randint(10, 20))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
-        if self.pindex == 0 and type == 2:
+        if self.pindex == 0 and type == 2 and self.maxpindex > 0:
             self.pindex = 1
             for num in range(1, self.maxpindex):
                 #time.sleep(random.randint(10, 20))
                 nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
-        if self.oindex == 0 and type == 3:
+        if self.oindex == 0 and type == 3 and self.maxoindex > 0:
             self.oindex = 1
             for num in range(1, self.maxoindex):
                 #time.sleep(random.randint(10, 20))
