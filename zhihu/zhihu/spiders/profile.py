@@ -61,6 +61,7 @@ class ZhihuSipder(CrawlSpider):
         groupavatars = selector.xpath('//a[contains(@href, "/'+name+'?id=")]/img/@src').extract()
         if len(nexturls) != 42 or len(groupavatars) != 42:
             logger.warn('not enough items. url:%s, urlnum:%d, groupnum:%d', response.url, len(nexturls), len(groupavatars))
+            logger.debug('parse:body:'+response.text)
         for index in range(len(nexturls)):
             #time.sleep(random.randint(10, 20))
             complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
