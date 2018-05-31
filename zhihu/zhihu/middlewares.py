@@ -24,6 +24,7 @@ class JobboleProxyMiddleware(object):
         self.start = time.time() * 1000
         logger.info("this is request ip:" + self.proxy)
         request.meta['proxy'] = self.proxy
+        request.meta['start'] = self.start
 
         return None
 
@@ -40,7 +41,7 @@ class JobboleProxyMiddleware(object):
         else:
             spider.logger.info('Request succeeded! The proxy is {}'.format(self.proxy))
             # if you use greedy strategy, you must feedback
-            duration=int(end - self.start)
+            duration=int(end - request.meta['start'])
             self.fetcher.proxy_feedback('success', self.proxy, duration)
             return response
 
