@@ -97,6 +97,7 @@ class ZhihuSipder(CrawlSpider):
         qrs = selector.xpath('//span[@class="shiftcode"]/img/@src').extract()
         if len(qrs) != 2:
             logger.warn('parse_group:invalid length, now will retry the  url:'+response.url)
+            logger.debug('parse_personal:some body:'+response.body)
             yield Request(response.url, callback=self.parse_group, errback=self.parse_err)
             return
         groupQR = qrs[1]
@@ -147,6 +148,7 @@ class ZhihuSipder(CrawlSpider):
         groupQRs = selector.xpath('//div[@class="iframe"]/img/@src').extract()
         if len(groupQRs) != 1:
             logger.warn('parse_personal:invalid length with url:'+response.url);
+            logger.debug('parse_personal:some body:'+response.body)
             yield Request(response.url, callback=self.parse_personal, errback=self.parse_err)
             return
         groupQR = groupQRs[0]
