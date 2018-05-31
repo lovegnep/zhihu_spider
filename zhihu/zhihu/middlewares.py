@@ -45,7 +45,7 @@ class JobboleProxyMiddleware(object):
             return response
 
     def process_exception(self, request, exception, spider):
-        logger.error('Request failed!The proxy is {}. Exception:{}'.format(self.proxy, exception))
+        logger.error('Request failed!The proxy is {}, {}. Exception:{}'.format(request.meta['proxy'], self.proxy, exception))
         # it's important to feedback, otherwise you may use the bad proxy next time
         self.fetcher.proxy_feedback('failure', self.proxy)
         # 对当前request换下一个代理

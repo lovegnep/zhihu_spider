@@ -102,7 +102,7 @@ MONGO_URI = 'mongodb://47.98.136.138:20005'
 
 DOWNLOADER_MIDDLEWARES = {
     'zhihu.middlewares.monitor': 100,
-    'zhihu.middlewares.JobboleProxyMiddleware' : 125,
+    #'zhihu.middlewares.JobboleProxyMiddleware' : 125,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     'zhihu.middlewares.RotateUserAgentMiddleware' : 400,
     'zhihu.middlewares.respd' : 1000,
