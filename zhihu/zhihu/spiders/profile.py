@@ -149,7 +149,7 @@ class ZhihuSipder(CrawlSpider):
         groupQRs = selector.xpath('//div[@class="iframe"]/img/@src').extract()
         if len(groupQRs) != 1:
             logger.warn('parse_personal:invalid length with url:'+response.url);
-            logger.debug('parse_personal:some body:'+response.body)
+            logger.debug('parse_personal:some body:'+response.text)
             yield Request(response.url, callback=self.parse_personal, errback=self.parse_err)
             return
         groupQR = groupQRs[0]
