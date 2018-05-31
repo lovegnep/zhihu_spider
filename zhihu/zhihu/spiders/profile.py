@@ -26,16 +26,16 @@ class ZhihuSipder(CrawlSpider):
     name = "zhihu"
     allowed_domains = ["www.weixinqun.com"]
     start_urls = [
-        "https://www.weixinqun.com/group?p=0",
-        "https://www.weixinqun.com/personal?p=0",
-        "https://www.weixinqun.com/openid?p=0"
+        #"https://www.weixinqun.com/group?p=0",
+        "https://www.weixinqun.com/personal?p=0"
+        #"https://www.weixinqun.com/openid?p=0"
     ]
     gindex=0
     pindex=0
     oindex=0
-    maxgindex=22
+    maxgindex=0
     maxpindex=2329
-    maxoindex=185
+    maxoindex=0
     gcount=0
     pcount=0
     ocount=0
@@ -144,7 +144,12 @@ class ZhihuSipder(CrawlSpider):
 
         selector = Selector(response)
 
-        groupQR = selector.xpath('//div[@class="iframe"]/img/@src').extract()[0]
+        groupQRs = selector.xpath('//div[@class="iframe"]/img/@src').extract()
+        if len(groupQRs) != 1:
+            logger.warn('parse_personal:invalid length with url:'+response.url);
+            yield Request(response.url, callback=self.parse_personal, errback=self.parse_err)
+            return
+        groupQR = groupQRs[0]
         groupname=selector.xpath('//span[@class="des_info_text"]/b/text()').extract()[0].strip()
         abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
