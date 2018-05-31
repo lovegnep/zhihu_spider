@@ -98,7 +98,7 @@ SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
 PROJECT_DIR = os.path.dirname(os.path.abspath(os.path.curdir))
 
 # mongodb配置
-MONGO_URI = 'mongodb://47.98.136.138:20005'
+MONGO_URI = 'mongodb://127.0.0.1:27017'
 
 DOWNLOADER_MIDDLEWARES = {
     'zhihu.middlewares.monitor': 100,
