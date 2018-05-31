@@ -102,7 +102,7 @@ MONGO_URI = 'mongodb://47.98.136.138:20005'
 
 DOWNLOADER_MIDDLEWARES = {
     'zhihu.middlewares.monitor': 100,
-    #'zhihu.middlewares.JobboleProxyMiddleware' : 125,
+    'zhihu.middlewares.JobboleProxyMiddleware' : 125,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     'zhihu.middlewares.RotateUserAgentMiddleware' : 400,
     'zhihu.middlewares.respd' : 1000,
@@ -125,7 +125,7 @@ LOG_FILE = "mySpider.log"
 FEED_EXPORT_ENCODING = 'utf-8'
 
 RANDOMIZE_DOWNLOAD_DELAY=False
-DOWNLOAD_DELAY=3
-CONCURRENT_REQUESTS_PER_IP=40
-DOWNLOAD_TIMEOUT = 30
+#DOWNLOAD_DELAY=3
+#CONCURRENT_REQUESTS_PER_IP=40
+DOWNLOAD_TIMEOUT = 60
 RETRY_ENABLED = False
