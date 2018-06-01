@@ -158,8 +158,11 @@ class ZhihuSipder(CrawlSpider):
         otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
         industry = otherinfos[0].strip()
         location = getLocationByName(otherinfos[1].strip())
-        grouptag = rmspace(re.split('[ |/,]',otherinfos[2].strip()))
-        tags = jiebaStr(groupname,abstract,otherinfos[2].strip())
+        grouptag=''
+        tags=[]
+        if len(otherinfos) >= 3:
+            grouptag = rmspace(re.split('[ |/,]',otherinfos[2].strip()))
+            tags = jiebaStr(groupname,abstract,otherinfos[2].strip())
         createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
         createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
         updateTime = createTime
@@ -236,7 +239,7 @@ class ZhihuSipder(CrawlSpider):
     def parse_err(self, failure):
         # log all failures
         self.logger.error(repr(failure))
-        logger.warn('request error happen:',failure)
+        logger.warn('request error happen:{}'.format(failure))
         # in case you want to do something special for some errors,
         # you may need the failure's type:
 

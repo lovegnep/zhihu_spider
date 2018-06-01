@@ -67,6 +67,8 @@ class monitor(object):
 
     def process_response(self, request, response, spider):
         logger.info('monitor process_response:%d',response.status)
+        if response.status != 200:
+            return request
         return response
 
     def process_exception(self, request, exception, spider):
