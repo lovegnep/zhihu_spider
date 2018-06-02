@@ -27,8 +27,8 @@ class ZhihuSipder(CrawlSpider):
     allowed_domains = ["www.96tui.cn"]
     start_urls = [
         "http://weixinqun.96tui.cn/?page=1",
-        "http://www.96tui.cn/hufen/?page=1&",
-        "http://www.96tui.cn/gongzhonghao/?page=1&",
+        #"http://www.96tui.cn/hufen/?page=1&",
+        #"http://www.96tui.cn/gongzhonghao/?page=1&",
     ]
     gindex=0
     pindex=0
@@ -97,6 +97,7 @@ class ZhihuSipder(CrawlSpider):
         logger.info('parse_group:groupavatar:'+groupavatar)
         selector = Selector(response)
         if len(selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()) == 0:
+            logger.debug('parse_group:invalid len of groupqr')
             return
         groupQR = selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()[0].strip()
         groupname=selector.xpath('//div[@class="v_title3 clear"]/h1/text()').extract()[0].strip()
