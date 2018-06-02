@@ -45,7 +45,7 @@ class ZhihuPipeline(object):
     def downimg(self, src, type1,type2):
         pid = os.getpid()
         dbsrc = calcDbSrc(src,pid,type1, type2)
-        savename = str(pid)+'_'+str(type1)+'_'+str(type2)+'_'+getImgName(src)
+        savename = '96tui_'+str(pid)+'_'+str(type1)+'_'+str(type2)+'_'+getImgName(src)
         savename = os.path.join(self.image_dir, savename)
         download_pic.delay(src, savename)
 

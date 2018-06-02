@@ -3304,5 +3304,5 @@ def getImgName(src):
     return src[s+1:e]
 
 def calcDbSrc(src,pid,type1,type2):
-    prefix=str(pid)+'_'+str(type1)+'_'+str(type2)+'_'
+    prefix='96tui_'+str(pid)+'_'+str(type1)+'_'+str(type2)+'_'
     return 'https://www.5min8.com/uploads/'+prefix+getImgName(src)

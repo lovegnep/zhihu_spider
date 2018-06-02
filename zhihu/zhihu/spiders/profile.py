@@ -24,68 +24,69 @@ logger=logging.getLogger()
 
 class ZhihuSipder(CrawlSpider):
     name = "zhihu"
-    allowed_domains = ["www.weixinqun.com"]
+    allowed_domains = ["www.96tui.cn"]
     start_urls = [
-        "https://www.weixinqun.com/group?p=0",
-        #"https://www.weixinqun.com/personal?p=0"
-        "https://www.weixinqun.com/openid?p=0"
+        "http://weixinqun.96tui.cn/?page=1",
+        "http://www.96tui.cn/hufen/?page=2&",
+        "http://www.96tui.cn/gongzhonghao/?page=1&",
     ]
     gindex=0
     pindex=0
     oindex=0
-    maxgindex=21
-    maxpindex=0
-    maxoindex=0
+    maxgindex=10
+    maxpindex=10
+    maxoindex=10
     gcount=0
     pcount=0
     ocount=0
     def parse(self, response):
-        end = len(response.url)
-        if response.url.rfind('?') != -1:
-            end = response.url.rfind('?')
-        name = response.url[(response.url.rfind('/') + 1):end]
+        selector = Selector(response)
         type = 0
         callback=self.parse_group
-        if name == "group":
-            type = 1
-        elif name == "personal":
+        nexturls=[]
+        groupavatars=[]
+        if response.url.rfind('hufen') != -1:
             type = 2
             callback = self.parse_personal
-        elif name == "openid":
-            type = 3
+            nexturls=selector.xpath('//ul[@class="qr_code clear"]/li/div/a/@href').extract()
+            groupavatars = selector.xpath('//ul[@class="qr_code clear"]/li/div/a/img/@src').extract()
+        elif response.url.rfind('gongzhonghao') != -1:
+            type=3
             callback = self.parse_openid
+            nexturls=selector.xpath('//ul[@class="gzh_tuijian clear"]/li/a/@href').extract()
+            groupavatars = selector.xpath('//ul[@class="gzh_tuijian clear"]/li/a/img/@src').extract()
+        else:
+            type=1
+            nexturls=selector.xpath('//ul[@class="qr_code clear"]/li/div/a/@href').extract()
+            groupavatars = selector.xpath('//ul[@class="qr_code clear"]/li/div/a/img/@src').extract()
 
-        selector = Selector(response)
-        xparse = '//div[@class="border5"]/a[contains(@href, "/' + name + '?id=")]/@href'
-        nexturls = selector.xpath(xparse).extract()
-        groupavatars = selector.xpath('//a[contains(@href, "/'+name+'?id=")]/img/@src').extract()
-        if len(nexturls) != 42 or len(groupavatars) != 42:
+        if len(nexturls) != len(groupavatars):
             logger.warn('not enough items. url:%s, urlnum:%d, groupnum:%d', response.url, len(nexturls), len(groupavatars))
             logger.debug('parse:body:'+response.text)
         for index in range(len(nexturls)):
             #time.sleep(random.randint(10, 20))
-            complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
-            yield Request(complete_url,
+            #complete_url = 'https://{}{}'.format(self.allowed_domains[0], nexturls[index])
+            yield Request(nexturls[index],
                           meta={'type': type,'groupavatar':groupavatars[index]},
                           callback=callback,
                           errback=self.parse_err)
         if self.gindex == 0 and type == 1 and self.maxgindex > 0:
             self.gindex = 1
-            for num in range(1, self.maxgindex):
+            for num in range(2, self.maxgindex):
                 #time.sleep(random.randint(10, 20))
-                nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
+                nexturl = "http://weixinqun.96tui.cn/?page=" + str(num)
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
         if self.pindex == 0 and type == 2 and self.maxpindex > 0:
             self.pindex = 1
-            for num in range(1, self.maxpindex):
+            for num in range(2, self.maxpindex):
                 #time.sleep(random.randint(10, 20))
-                nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
+                nexturl = "http://www.96tui.cn/hufen/?page={}&".format(str(num))
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
         if self.oindex == 0 and type == 3 and self.maxoindex > 0:
             self.oindex = 1
-            for num in range(1, self.maxoindex):
+            for num in range(2, self.maxoindex):
                 #time.sleep(random.randint(10, 20))
-                nexturl = "https://www.weixinqun.com/" + name + "?p=" + str(num)
+                nexturl = "http://www.96tui.cn/gongzhonghao/?page={}&".format(str(num))
                 yield Request(nexturl, callback=self.parse, errback=self.parse_err)
 
     def parse_group(self, response):
@@ -95,29 +96,22 @@ class ZhihuSipder(CrawlSpider):
         groupavatar=response.meta['groupavatar']
 
         selector = Selector(response)
-        qrs = selector.xpath('//span[@class="shiftcode"]/img/@src').extract()
-        if len(qrs) != 2:
-            logger.warn('parse_group:invalid length, now will retry the  url:'+response.url)
-            logger.debug('parse_personal:some body:'+response.body)
-            yield Request(response.url, callback=self.parse_group, errback=self.parse_err)
-            return
-        groupQR = qrs[1]
-        masterQR = qrs[0]
-        groupname=selector.xpath('//span[@class="des_info_text"]/b/text()').extract()[0].strip()
-        abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
-        otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
-        industry = otherinfos[0].strip()
-        location = getLocationByName(otherinfos[1].strip())
-        grouptag = rmspace(re.split('[ |/,.，。]',otherinfos[2].strip()))
-        tags = jiebaStr(groupname,abstract,otherinfos[2].strip())
-        createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
-        createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
+        groupQR = selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()[0].strip()
+        groupname=selector.xpath('//div[@class="v_title3 clear"]/h1/text()').extract()[0].strip()
+        abstract = selector.xpath('//div[@class="v_notify"]/text()').extract()[0].strip()
+        #otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
+        #industry = otherinfos[0].strip()
+        #location = getLocationByName(otherinfos[1].strip())
+        grouptag = selector.xpath('//a[@class="keywords"]/text()').extract()
+        tags = jiebaStr(groupname,abstract,','.join(grouptag))
+        createTime = datetime.datetime.now()
         updateTime = createTime
-        masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1].strip()
+        masterwx = response.xpath('//div[@class="main clear"]/div[@class="l"]/div/text()').extract()[2].strip()
+        masterwx=masterwx[masterwx.find(':')+1:len(masterwx)]
         if groupavatar.find('http') == -1:
             logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
-        if groupQR.find('http') == -1 or masterQR.find('http') == -1:
-            logger.warn('invalid gorm: url:%s, groupQR:%s, masterQR:%s', response.url, groupQR, masterQR)
+        if groupQR.find('http') == -1:
+            logger.warn('invalid gorm: url:%s, groupQR:%s', response.url, groupQR)
 
         item = ZhihuPeopleItem(
             type=1,
@@ -130,7 +124,7 @@ class ZhihuSipder(CrawlSpider):
             masterwx=masterwx,
             groupavatar=groupavatar,
             groupQR=groupQR,
-            masterQR=masterQR,
+            masterQR='',
             createTime=createTime,
             updateTime=updateTime,
             tags=tags,
@@ -145,28 +139,16 @@ class ZhihuSipder(CrawlSpider):
         groupavatar=response.meta['groupavatar']
 
         selector = Selector(response)
+        groupQR = selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()[0].strip()
+        groupname=selector.xpath('//div[@class="v_title3 clear"]/h1/text()').extract()[0].strip()
+        abstract = selector.xpath('//div[@class="v_notify"]/text()').extract()[0].strip()
+        grouptag = selector.xpath('//a[@class="keywords"]/text()').extract()
 
-        groupQRs = selector.xpath('//div[@class="iframe"]/img/@src').extract()
-        if len(groupQRs) != 1:
-            logger.warn('parse_personal:invalid length with url:'+response.url);
-            logger.debug('parse_personal:some body:'+response.text)
-            yield Request(response.url, callback=self.parse_personal, errback=self.parse_err)
-            return
-        groupQR = groupQRs[0]
-        groupname=selector.xpath('//span[@class="des_info_text"]/b/text()').extract()[0].strip()
-        abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
-        otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
-        industry = otherinfos[0].strip()
-        location = getLocationByName(otherinfos[1].strip())
-        grouptag=''
-        tags=[]
-        if len(otherinfos) >= 3:
-            grouptag = rmspace(re.split('[ |/,]',otherinfos[2].strip()))
-            tags = jiebaStr(groupname,abstract,otherinfos[2].strip())
-        createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
-        createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
+        tags=jiebaStr(groupname,abstract,','.join(grouptag))
+        createTime = datetime.datetime.now()
         updateTime = createTime
-        masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1].strip()
+        masterwx = selector.xpath('//div[@class="main clear"]/div[@class="l"]/div/text()').extract()[2].strip()
+        masterwx=masterwx[masterwx.find(':')+1:len(masterwx)]
         if groupavatar.find('http') == -1:
             logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
         if groupQR.find('http') == -1:
@@ -196,23 +178,16 @@ class ZhihuSipder(CrawlSpider):
         groupavatar=response.meta['groupavatar']
 
         selector = Selector(response)
-        groupQRs = selector.xpath('//div[@class="iframe"]/img/@src').extract()
-        if len(groupQRs) != 1:
-            logger.warn('parse_openid: invalid length, now will retry the url:'+response.url)
-            yield Request(response.url, callback=self.parse_openid, errback=self.parse_err)
-            return
-        groupQR = groupQRs[0]
-        groupname=selector.xpath('//span[@class="des_info_text"]/b/text()').extract()[0].strip()
-        abstract = selector.xpath('//span[@class="des_info_text2"]/text()').extract()[0].strip()
-        otherinfos = selector.xpath('//ul[@class="other-info"]/li/a/text()').extract()
-        industry = otherinfos[0].strip()
-        location = getLocationByName(otherinfos[1].strip())
-        grouptag = rmspace(re.split('[ |/,]',otherinfos[2].strip()))
-        tags = jiebaStr(groupname,abstract,otherinfos[2].strip())
-        createTime = selector.xpath('//li/text()').re(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})')[0]
-        createTime = datetime.datetime.strptime(createTime, "%Y-%m-%d %H:%M:%S")
+        groupQR = selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()[0].strip()
+        groupname=selector.xpath('//div[@class="v_title3 clear"]/h1/text()').extract()[0].strip()
+        abstract = selector.xpath('//div[@class="clear main"]/div[@class="l"]/div/text()').extract()[3].strip()
+        grouptag = selector.xpath('//a[@class="keywords"]/text()').extract()
+
+        tags=jiebaStr(groupname,abstract,','.join(grouptag))
+        createTime = datetime.datetime.now()
         updateTime = createTime
-        masterwx = response.xpath('//div[@class="clearfix"]/ul/li/span[@class="des_info_text2"]/text()').extract()[1].strip()
+        masterwx = selector.xpath('//div[@class="clear main"]/div[@class="l"]/div/text()').extract()[2].strip()
+        masterwx=masterwx[masterwx.find(':')+1:len(masterwx)]
         if groupavatar.find('http') == -1:
             logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
         if groupQR.find('http') == -1:
