@@ -120,7 +120,7 @@ DOWNLOAD_HANDLERS = {
         'S3':None,
 }
 
-LOG_FILE = "mySpider.log"
+#LOG_FILE = "mySpider.log"
 
 FEED_EXPORT_ENCODING = 'utf-8'
 

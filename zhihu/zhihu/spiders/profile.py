@@ -33,9 +33,9 @@ class ZhihuSipder(CrawlSpider):
     gindex=0
     pindex=0
     oindex=0
-    maxgindex=10
-    maxpindex=10
-    maxoindex=10
+    maxgindex=2
+    maxpindex=2
+    maxoindex=2
     gcount=0
     pcount=0
     ocount=0
@@ -48,7 +48,7 @@ class ZhihuSipder(CrawlSpider):
         if response.url.rfind('hufen') != -1:
             type = 2
             callback = self.parse_personal
-            nexturls=selector.xpath('//ul[@class="qr_code clear"]/li/div/a/@href').extract()
+            nexturls=selector.xpath('//ul[@class="qr_code clear"]/li/div/a[@class="thumb_100 relative"]/@href').extract()
             groupavatars = selector.xpath('//ul[@class="qr_code clear"]/li/div/a/img/@src').extract()
         elif response.url.rfind('gongzhonghao') != -1:
             type=3
@@ -57,7 +57,7 @@ class ZhihuSipder(CrawlSpider):
             groupavatars = selector.xpath('//ul[@class="gzh_tuijian clear"]/li/a/img/@src').extract()
         else:
             type=1
-            nexturls=selector.xpath('//ul[@class="qr_code clear"]/li/div/a/@href').extract()
+            nexturls=selector.xpath('//ul[@class="qr_code clear"]/li/div[@class="thumb"]/a/@href').extract()
             groupavatars = selector.xpath('//ul[@class="qr_code clear"]/li/div/a/img/@src').extract()
 
         if len(nexturls) != len(groupavatars):
@@ -94,7 +94,7 @@ class ZhihuSipder(CrawlSpider):
         logger.debug('parse_group count:%d',self.gcount)
         type=response.meta['type']
         groupavatar=response.meta['groupavatar']
-
+        logger.info('parse_group:groupavatar:'+groupavatar)
         selector = Selector(response)
         groupQR = selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()[0].strip()
         groupname=selector.xpath('//div[@class="v_title3 clear"]/h1/text()').extract()[0].strip()
@@ -135,7 +135,7 @@ class ZhihuSipder(CrawlSpider):
         logger.debug('parse_personal count:%d',self.pcount)
         type=response.meta['type']
         groupavatar=response.meta['groupavatar']
-
+        logger.info('parse_personal:groupavatar:'+groupavatar)
         selector = Selector(response)
         groupQR = selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()[0].strip()
         groupname=selector.xpath('//div[@class="v_title3 clear"]/h1/text()').extract()[0].strip()
@@ -172,7 +172,7 @@ class ZhihuSipder(CrawlSpider):
         logger.debug('parse_openid count:%d',self.ocount)
         type=response.meta['type']
         groupavatar=response.meta['groupavatar']
-
+        logger.info('parse_openid:groupavatar:'+groupavatar)
         selector = Selector(response)
         groupQR = selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()[0].strip()
         groupname=selector.xpath('//div[@class="v_title3 clear"]/h1/text()').extract()[0].strip()
