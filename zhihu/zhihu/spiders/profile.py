@@ -33,9 +33,9 @@ class ZhihuSipder(CrawlSpider):
     gindex=0
     pindex=0
     oindex=0
-    maxgindex=2
-    maxpindex=2
-    maxoindex=2
+    maxgindex=30
+    maxpindex=1186
+    maxoindex=876
     gcount=0
     pcount=0
     ocount=0
@@ -107,7 +107,7 @@ class ZhihuSipder(CrawlSpider):
         createTime = datetime.datetime.now()
         updateTime = createTime
         masterwx = response.xpath('//div[@class="main clear"]/div[@class="l"]/div/text()').extract()[2].strip()
-        masterwx=masterwx[masterwx.find(':')+1:len(masterwx)]
+        masterwx=masterwx[masterwx.find('：')+1:len(masterwx)]
         if groupavatar.find('http') == -1:
             logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
         if groupQR.find('http') == -1:
@@ -146,7 +146,7 @@ class ZhihuSipder(CrawlSpider):
         createTime = datetime.datetime.now()
         updateTime = createTime
         masterwx = selector.xpath('//div[@class="main clear"]/div[@class="l"]/div/text()').extract()[2].strip()
-        masterwx=masterwx[masterwx.find(':')+1:len(masterwx)]
+        masterwx=masterwx[masterwx.find('：')+1:len(masterwx)]
         if groupavatar.find('http') == -1:
             logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
         if groupQR.find('http') == -1:
@@ -183,7 +183,7 @@ class ZhihuSipder(CrawlSpider):
         createTime = datetime.datetime.now()
         updateTime = createTime
         masterwx = selector.xpath('//div[@class="clear main"]/div[@class="l"]/div/text()').extract()[2].strip()
-        masterwx=masterwx[masterwx.find(':')+1:len(masterwx)]
+        masterwx=masterwx[masterwx.find('：')+1:len(masterwx)]
         if groupavatar.find('http') == -1:
             logger.warn('invalid groupavatar: url:%s, gavatarurl:%s', response.url, groupavatar)
         if groupQR.find('http') == -1:
