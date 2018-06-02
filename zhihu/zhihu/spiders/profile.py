@@ -59,6 +59,7 @@ class ZhihuSipder(CrawlSpider):
             type=1
             nexturls=selector.xpath('//ul[@class="qr_code clear"]/li/div[@class="thumb"]/a/@href').extract()
             groupavatars = selector.xpath('//ul[@class="qr_code clear"]/li/div/a/img/@src').extract()
+            logger.debug('parse:{},{},{}'.format(len(nexturls),len(groupavatars),type))
 
         if len(nexturls) != len(groupavatars):
             logger.warn('not enough items. url:%s, urlnum:%d, groupnum:%d', response.url, len(nexturls), len(groupavatars))
