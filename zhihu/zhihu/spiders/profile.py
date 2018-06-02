@@ -26,15 +26,15 @@ class ZhihuSipder(CrawlSpider):
     name = "zhihu"
     allowed_domains = ["www.weixinqun.com"]
     start_urls = [
-        #"https://www.weixinqun.com/group?p=0",
-        "https://www.weixinqun.com/personal?p=0"
-        #"https://www.weixinqun.com/openid?p=0"
+        "https://www.weixinqun.com/group?p=0",
+        #"https://www.weixinqun.com/personal?p=0"
+        "https://www.weixinqun.com/openid?p=0"
     ]
     gindex=0
     pindex=0
     oindex=0
-    maxgindex=0
-    maxpindex=2329
+    maxgindex=21
+    maxpindex=0
     maxoindex=0
     gcount=0
     pcount=0
