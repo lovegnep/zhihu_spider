@@ -27,7 +27,7 @@ class ZhihuSipder(CrawlSpider):
     allowed_domains = ["www.96tui.cn"]
     start_urls = [
         "http://weixinqun.96tui.cn/?page=1",
-        "http://www.96tui.cn/hufen/?page=2&",
+        "http://www.96tui.cn/hufen/?page=1&",
         "http://www.96tui.cn/gongzhonghao/?page=1&",
     ]
     gindex=0
@@ -116,8 +116,6 @@ class ZhihuSipder(CrawlSpider):
         item = ZhihuPeopleItem(
             type=1,
             source=2,
-            industry=industry,
-            location=location,
             groupname=groupname,
             abstract=abstract,
             grouptag=grouptag,
@@ -156,8 +154,6 @@ class ZhihuSipder(CrawlSpider):
         item = ZhihuPeopleItem(
             type=2,
             source=2,
-            industry=industry,
-            location=location,
             groupname=groupname,
             abstract=abstract,
             grouptag=grouptag,
@@ -195,8 +191,6 @@ class ZhihuSipder(CrawlSpider):
         item = ZhihuPeopleItem(
             type=3,
             source=2,
-            industry=industry,
-            location=location,
             groupname=groupname,
             abstract=abstract,
             grouptag=grouptag,
