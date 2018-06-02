@@ -33,8 +33,8 @@ class ZhihuPipeline(object):
         )
 
     def open_spider(self, spider):
-        self.client = MongoClient(self.mongo_uri)
-        #self.client = MongoClient('47.98.136.138:20005',username='lovegnep_wcgroup',password='liuyang15',authSource='wcgroup',authMechanism='SCRAM-SHA-1')
+        #self.client = MongoClient(self.mongo_uri)
+        self.client = MongoClient('47.98.136.138:20005',username='lovegnep_wcgroup',password='liuyang15',authSource='wcgroup',authMechanism='SCRAM-SHA-1')
         self.db = self.client[self.mongo_db]
         if not os.path.exists(self.image_dir):
             os.mkdir(self.image_dir)
@@ -71,14 +71,16 @@ class ZhihuPipeline(object):
         mqrsrc=item['masterQR']
         item['groupavatar'] = calcDbSrc(item['groupavatar'], pid,1,1)
         item['groupQR'] = calcDbSrc(item['groupQR'], pid,1,2)
-        item['masterQR'] = calcDbSrc(item['masterQR'], pid,1,3)
+        if mqrsrc != '':
+            item['masterQR'] = calcDbSrc(item['masterQR'], pid,1,3)
         collection = self.db['qrmodels']
         groupQR = item['groupQR']
         collection.update({'groupQR': groupQR},
                           dict(item), upsert=True)
         self.downimg(gavaarc, 1,1)
         self.downimg(gqrsrc, 1,2)
-        self.downimg(mqrsrc, 1,3)
+        if mqrsrc != '':
+            self.downimg(mqrsrc, 1,3)
     def _process_personal(self, item):
         """
         存储用户信息
