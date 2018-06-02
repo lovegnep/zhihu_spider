@@ -3297,8 +3297,9 @@ def rmspace(arr):
     return newres
 
 def getImgName(src):
-    s=src.rfind('/')
+    #http://tuicn.oss-cn-shanghai.aliyuncs.com/qrcode/2018/04/23/06/36_45_80oNb2F2qE47O48ft17SO81ZbkvbQ3G4rGlQ.png?x-oss-process=image/resize,m_fill,w_200,h_200
     e=src.rfind('?')
+    s=src.rfind('/',0,e)
     if e == -1:
         e=len(src)
     return src[s+1:e]
