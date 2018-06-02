@@ -24,7 +24,7 @@ logger=logging.getLogger()
 
 class ZhihuSipder(CrawlSpider):
     name = "zhihu"
-    allowed_domains = ["www.96tui.cn"]
+    #allowed_domains = ["www.96tui.cn"]
     start_urls = [
         "http://weixinqun.96tui.cn/?page=1",
         #"http://www.96tui.cn/hufen/?page=1&",
