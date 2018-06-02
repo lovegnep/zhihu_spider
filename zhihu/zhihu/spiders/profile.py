@@ -34,8 +34,8 @@ class ZhihuSipder(CrawlSpider):
     pindex=0
     oindex=0
     maxgindex=30
-    maxpindex=1186
-    maxoindex=876
+    maxpindex=0
+    maxoindex=0
     gcount=0
     pcount=0
     ocount=0
@@ -96,6 +96,8 @@ class ZhihuSipder(CrawlSpider):
         groupavatar=response.meta['groupavatar']
         logger.info('parse_group:groupavatar:'+groupavatar)
         selector = Selector(response)
+        if len(selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()) == 0:
+            return
         groupQR = selector.xpath('//div[@id="qr_info"]/div[@class="qr"]/div/img/@src').extract()[0].strip()
         groupname=selector.xpath('//div[@class="v_title3 clear"]/h1/text()').extract()[0].strip()
         abstract = selector.xpath('//div[@class="v_notify"]/text()').extract()[0].strip()
