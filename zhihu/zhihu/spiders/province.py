@@ -3301,7 +3301,12 @@ def getImgName(src):
     e=src.rfind('?')
     if e == -1:
         e=len(src)
-    return src[s+1:e]
+    elif e < s:
+        e=len(src)
+    name=src[s+1:e]
+    if name.find('.') == -1:
+        name=name+'.jpg'
+    return name
 
 def calcDbSrc(src,pid,type1,type2):
     prefix=str(pid)+'_'+str(type1)+'_'+str(type2)+'_'
