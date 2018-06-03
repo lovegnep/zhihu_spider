@@ -33,9 +33,9 @@ class ZhihuSipder(CrawlSpider):
     gindex=0
     pindex=0
     oindex=0
-    maxgindex=21
+    maxgindex=30
     maxpindex=0
-    maxoindex=0
+    maxoindex=186
     gcount=0
     pcount=0
     ocount=0
@@ -59,7 +59,7 @@ class ZhihuSipder(CrawlSpider):
         xparse = '//div[@class="border5"]/a[contains(@href, "/' + name + '?id=")]/@href'
         nexturls = selector.xpath(xparse).extract()
         groupavatars = selector.xpath('//a[contains(@href, "/'+name+'?id=")]/img/@src').extract()
-        if len(nexturls) != 42 or len(groupavatars) != 42:
+        if len(nexturls) != len(groupavatars):
             logger.warn('not enough items. url:%s, urlnum:%d, groupnum:%d', response.url, len(nexturls), len(groupavatars))
             logger.debug('parse:body:'+response.text)
         for index in range(len(nexturls)):
